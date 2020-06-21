@@ -10,15 +10,16 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
 func main() {
 	read := bufio.NewScanner(os.Stdin)
 	b := getjson()
-	fmt.Println("此程序会尝试测试 mojang 正版验证相关的网站的 ip 的速度，然后尝试修改 hosts 中的内容达到解决无法正版登录之类的问题。")
+	fmt.Println("此程序会尝试测试 mojang 正版验证相关的网站的 ip 的速度，然后尝试修改 hosts 中的内容来解决无法正版登录之类的问题。")
 	fmt.Println("如果需要使用自动设置 hosts 的功能，请以右键以管理员身份运行")
-	fmt.Println("按回车键继续")
+	fmt.Print("按回车键继续")
 	read.Scan()
 	fmt.Println("正在测试，耐心等待")
 	u := mcping.JSON(b)
@@ -37,13 +38,14 @@ func main() {
 			m[k] = ip
 		}
 	}
-	fmt.Println("测试完毕，按下回车键将尝试更改 hosts 。会尝试将已有的 hosts 备份，可能导致的文件损坏请自行承担。")
+	fmt.Println("测试完毕，按下回车键将尝试更改 hosts 。会尝试将已有的 hosts 备份，可能导致文件损坏的后果请自行承担。")
 	read.Scan()
 	w := bytes.NewBuffer(nil)
 	w.WriteString("\n")
 	for k, v := range m {
 		if v != "" {
-			w.WriteString(v)
+			s := strings.Split(v, "/")
+			w.WriteString(s[2])
 			w.WriteString(" ")
 			w.WriteString(k)
 			w.WriteString("\n")

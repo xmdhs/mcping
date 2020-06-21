@@ -99,7 +99,7 @@ func write(b []byte) error {
 	if err != nil {
 		return err
 	}
-	fff, err := os.Create(`"C:\Windows\System32\drivers\etc\hosts"`)
+	fff, err := os.OpenFile(`"C:\Windows\System32\drivers\etc\hosts"`, os.O_APPEND|os.O_WRONLY, 777)
 	defer fff.Close()
 	if err != nil {
 		return err

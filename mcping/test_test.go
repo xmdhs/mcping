@@ -22,10 +22,7 @@ func TestTest(t *testing.T) {
 }
 
 func TestJson(t *testing.T) {
-	u, err := JSON(nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	u := JSON(nil)
 	for k, v := range u.IP {
 		fmt.Println(k, v)
 	}

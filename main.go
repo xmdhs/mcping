@@ -20,10 +20,8 @@ func main() {
 	fmt.Println("如果需要使用自动设置 hosts 的功能，请以右键以管理员身份运行")
 	fmt.Println("按回车键继续")
 	read.Scan()
-	u, err := mcping.JSON(b)
-	if err != nil {
-		u, _ = mcping.JSON(nil)
-	}
+	fmt.Println("正在测试，耐心等待")
+	u := mcping.JSON(b)
 	m := make(map[string]string)
 	for k, v := range u.IP {
 		ip, atime, err := mcping.Test(k, v)
@@ -31,19 +29,25 @@ func main() {
 			fmt.Print(k, ":")
 			fmt.Println("所有 ip 均不可用")
 		}
-		fmt.Println(k, ": 测试所有 ip 中延迟最低的为", ip, "延迟为", atime)
+		if ip == "" {
+			fmt.Println(k, "无需更改")
+		} else {
+			fmt.Println(k, ": 测试所有 ip 中延迟最低的为", ip, "延迟为", atime)
+		}
 		m[k] = ip
 	}
 	fmt.Println("测试完毕，按下回车键将尝试更改 hosts 。会尝试将已有的 hosts 备份，可能导致的文件损坏请自行承担。")
 	read.Scan()
 	w := bytes.NewBuffer(nil)
 	for k, v := range m {
-		w.WriteString(v)
-		w.WriteString(" ")
-		w.WriteString(k)
-		w.WriteString("\n")
+		if v != "" {
+			w.WriteString(v)
+			w.WriteString(" ")
+			w.WriteString(k)
+			w.WriteString("\n")
+		}
 	}
-	err = write(w.Bytes())
+	err := write(w.Bytes())
 	if err != nil {
 		fmt.Println("设置失败，请尝试右键以管理员身份运行")
 		fmt.Println("文件保存在此程序同一目录下，可自行查阅有关资料自行设置")

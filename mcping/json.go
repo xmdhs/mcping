@@ -8,9 +8,8 @@ type urlip struct {
 	IP map[string][]string `json:"urlip"`
 }
 
-func JSON(b []byte) (urlip, error) {
+func JSON(b []byte) urlip {
 	u := urlip{}
-	var err error
 	if b == nil {
 		b = []byte(j)
 		json.Unmarshal(b, &u)
@@ -21,6 +20,5 @@ func JSON(b []byte) (urlip, error) {
 			json.Unmarshal(b, &u)
 		}
 	}
-
-	return u, err
+	return u
 }

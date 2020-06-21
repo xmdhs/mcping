@@ -7,7 +7,7 @@ import (
 )
 
 func Test(url string, ip []string) (string, int64, error) {
-	ch := make(chan bool, 10)
+	ch := make(chan bool, 20)
 	ti := make(chan iptime, 3)
 	m := make(map[string]int64)
 	ip = append(ip, "")

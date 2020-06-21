@@ -53,12 +53,12 @@ func main() {
 		fmt.Println("设置失败，请尝试右键以管理员身份运行")
 		fmt.Println("文件保存在此程序同一目录下，可自行查阅有关资料自行设置")
 		fff, err := os.Create(`hosts`)
+		defer fff.Close()
 		_, err = fff.Write(w.Bytes())
 		if err != nil {
 			fmt.Println("依然保存失败，你的电脑有问题。")
 			fmt.Println(w.String())
 		}
-		fff.Write(b)
 		read.Scan()
 	} else {
 		fmt.Println("设置成功")

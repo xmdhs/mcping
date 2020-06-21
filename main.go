@@ -40,6 +40,7 @@ func main() {
 	fmt.Println("测试完毕，按下回车键将尝试更改 hosts 。会尝试将已有的 hosts 备份，可能导致的文件损坏请自行承担。")
 	read.Scan()
 	w := bytes.NewBuffer(nil)
+	w.WriteString("\n")
 	for k, v := range m {
 		if v != "" {
 			w.WriteString(v)

@@ -28,13 +28,14 @@ func main() {
 		if err != nil {
 			fmt.Print(k, ":")
 			fmt.Println("所有 ip 均不可用")
-		}
-		if ip == "" {
-			fmt.Println(k, "无需更改")
 		} else {
-			fmt.Println(k, ": 测试所有 ip 中延迟最低的为", ip, "延迟为", atime)
+			if ip == "" {
+				fmt.Println(k, "无需更改")
+			} else {
+				fmt.Println(k, ": 测试所有 ip 中延迟最低的为", ip, "延迟为", atime)
+			}
+			m[k] = ip
 		}
-		m[k] = ip
 	}
 	fmt.Println("测试完毕，按下回车键将尝试更改 hosts 。会尝试将已有的 hosts 备份，可能导致的文件损坏请自行承担。")
 	read.Scan()
@@ -52,18 +53,19 @@ func main() {
 		fmt.Println("设置失败，请尝试右键以管理员身份运行")
 		fmt.Println("文件保存在此程序同一目录下，可自行查阅有关资料自行设置")
 		fff, err := os.Create(`hosts`)
-		_, err = fff.Write(b)
+		_, err = fff.Write(w.Bytes())
 		if err != nil {
 			fmt.Println("依然保存失败，你的电脑有问题。")
 			fmt.Println(w.String())
 		}
 		fff.Write(b)
 		read.Scan()
+	} else {
+		fmt.Println("设置成功")
+		cmd := exec.Command("ipconfig", "/flushdns")
+		cmd.Run()
+		read.Scan()
 	}
-	fmt.Println("设置成功")
-	cmd := exec.Command("ipconfig", "/flushdns")
-	cmd.Run()
-	read.Scan()
 }
 
 func getjson() []byte {

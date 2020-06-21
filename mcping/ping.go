@@ -26,10 +26,16 @@ func Ping(url, ip string) (int64, error) {
 		c = http.Client{
 			Timeout:   5 * time.Second,
 			Transport: transport,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 		}
 	} else {
 		c = http.Client{
 			Timeout: 5 * time.Second,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 		}
 	}
 	t := time.Now().UnixNano()

@@ -7,9 +7,9 @@ import (
 
 func TestPing(t *testing.T) {
 	list := map[string]string{
-		"https://www.mcbbs.net/": "110.53.246.70",
-		"https://minecraft.net":  "99.84.227.53",
-		"https://xmdhs.top/":     "110.53.246.70", //Fail
+		"www.mcbbs.net/":    "110.53.246.70",
+		"www.minecraft.net": "99.84.227.53",
+		"xmdhs.top/":        "110.53.246.70", //Fail
 	}
 	for k, v := range list {
 		i, err := Ping(k, v)

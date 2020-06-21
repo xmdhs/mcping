@@ -50,12 +50,14 @@ func main() {
 	}
 	err := write(w.Bytes())
 	if err != nil {
+		fmt.Println(err)
 		fmt.Println("设置失败，请尝试右键以管理员身份运行")
 		fmt.Println("文件保存在此程序同一目录下，可自行查阅有关资料自行设置")
 		fff, err := os.Create(`hosts`)
 		defer fff.Close()
 		_, err = fff.Write(w.Bytes())
 		if err != nil {
+			fmt.Println(err)
 			fmt.Println("依然保存失败，你的电脑有问题。")
 			fmt.Println(w.String())
 		}
@@ -91,15 +93,21 @@ func getjson() []byte {
 }
 
 func write(b []byte) error {
-	f, err := os.Open(`"C:\Windows\System32\drivers\etc\hosts"`)
+	f, err := os.Open(`C:\Windows\System32\drivers\etc\hosts`)
 	defer f.Close()
-	ff, err := os.Create(`"C:\Windows\System32\drivers\etc\hosts.mcping.bak"`)
+	if err != nil {
+		return err
+	}
+	ff, err := os.Create(`C:\Windows\System32\drivers\etc\hosts.mcping.bak`)
 	defer ff.Close()
+	if err != nil {
+		return err
+	}
 	_, err = io.Copy(ff, f)
 	if err != nil {
 		return err
 	}
-	fff, err := os.OpenFile(`"C:\Windows\System32\drivers\etc\hosts"`, os.O_APPEND|os.O_WRONLY, 777)
+	fff, err := os.OpenFile(`C:\Windows\System32\drivers\etc\hosts`, os.O_APPEND|os.O_WRONLY, 777)
 	defer fff.Close()
 	if err != nil {
 		return err

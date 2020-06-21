@@ -50,7 +50,7 @@ func (ti *testip) goget(ip string) {
 		for i := 0; i < 3; i++ {
 			t, err := Ping(ti.url, ip)
 			if err != nil {
-				t = 99999999
+				t = 999999999999999
 			}
 			tt = append(tt, t)
 		}
@@ -87,7 +87,7 @@ func tosort(m map[string]int64) (tosorts, error) {
 		})
 	}
 	sort.Slice(t, func(i, j int) bool { return t[i].v < t[j].v })
-	if t[0].v == 99999999 {
+	if t[0].v == 999999999999999 {
 		return t[0], errors.New("can not get ip")
 	}
 	return t[0], nil

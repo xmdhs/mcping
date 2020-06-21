@@ -33,7 +33,7 @@ func Ping(url, ip string) (int64, error) {
 		}
 	}
 	t := time.Now().UnixNano()
-	h, err := http.NewRequest("GET", url, nil)
+	h, err := http.NewRequest("GET", "https://"+url, nil)
 	rep, err := c.Do(h)
 	if err != nil {
 		return 0, err

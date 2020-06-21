@@ -51,7 +51,7 @@ func (ti *testip) goget(ip string) {
 	ti.Add(1)
 	go func() {
 		tt := make([]int64, 0, 3)
-		for i := 0; i < 5; i++ {
+		for i := 0; i < 3; i++ {
 			t, err := Ping(ti.url, ip)
 			if err != nil {
 				t = 99999999

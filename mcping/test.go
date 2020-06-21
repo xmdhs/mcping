@@ -7,12 +7,10 @@ import (
 )
 
 func Test(url string, ip []string) (string, int64, error) {
-	ch := make(chan bool, 20)
 	ti := make(chan iptime, 3)
 	m := make(map[string]int64)
 	ip = append(ip, "")
 	t := testip{
-		ch:  ch,
 		ips: ti,
 		url: url,
 		m:   m,
@@ -34,7 +32,6 @@ func Test(url string, ip []string) (string, int64, error) {
 }
 
 type testip struct {
-	ch  chan bool
 	ips chan iptime
 	url string
 	sync.WaitGroup
@@ -47,7 +44,6 @@ type iptime struct {
 }
 
 func (ti *testip) goget(ip string) {
-	ti.ch <- true
 	ti.Add(1)
 	go func() {
 		tt := make([]int64, 0, 3)
@@ -64,7 +60,6 @@ func (ti *testip) goget(ip string) {
 		}
 		ti.ips <- iptime
 		ti.Done()
-		<-ti.ch
 	}()
 }
 

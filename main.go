@@ -44,10 +44,10 @@ func main() {
 	w.WriteString("\n")
 	for k, v := range m {
 		if v != "" {
-			s := strings.Split(v, "/")
-			w.WriteString(s[2])
+			s := strings.Split(k, "/")
+			w.WriteString(v)
 			w.WriteString(" ")
-			w.WriteString(k)
+			w.WriteString(s[2])
 			w.WriteString("\n")
 		}
 	}

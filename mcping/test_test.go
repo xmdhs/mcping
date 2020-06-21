@@ -11,12 +11,22 @@ func TestTest(t *testing.T) {
 		"119.167.216.140",
 		"121.12.123.201",
 	}
-	m, err := test("https://www.mcbbs.net/", ips)
+	m, k, err := Test("https://www.mcbbs.net/", ips)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if m == "" {
 		fmt.Println("无需更改")
 	}
-	fmt.Println(m)
+	fmt.Println(m, k)
+}
+
+func TestJson(t *testing.T) {
+	u, err := JSON(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for k, v := range u.IP {
+		fmt.Println(k, v)
+	}
 }

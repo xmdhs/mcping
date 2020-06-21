@@ -6,8 +6,8 @@ import (
 	"sync"
 )
 
-func test(url string, ip []string) (tosorts, error) {
-	ch := make(chan bool, 3)
+func Test(url string, ip []string) (string, int64, error) {
+	ch := make(chan bool, 10)
 	ti := make(chan iptime, 3)
 	m := make(map[string]int64)
 	ip = append(ip, "")
@@ -28,9 +28,9 @@ func test(url string, ip []string) (tosorts, error) {
 	t.tim()
 	aip, err := tosort(t.m)
 	if err != nil {
-		return aip, err
+		return "", 0, err
 	}
-	return aip, nil
+	return aip.k, aip.v, nil
 }
 
 type testip struct {

@@ -24,7 +24,7 @@ func main() {
 	fmt.Println("正在测试，耐心等待")
 	u := mcping.JSON(b)
 	m := make(map[string]string)
-	for k, v := range u.IP {
+	for k, v := range u {
 		ip, atime, err := mcping.Test(k, v)
 		if err != nil {
 			fmt.Print(k, ":")

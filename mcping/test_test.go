@@ -23,7 +23,7 @@ func TestTest(t *testing.T) {
 
 func TestJson(t *testing.T) {
 	u := JSON(nil)
-	for k, v := range u.IP {
+	for k, v := range u {
 		fmt.Println(k, v)
 	}
 }

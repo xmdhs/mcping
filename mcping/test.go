@@ -54,6 +54,7 @@ func (ti *testip) goget(ip string) {
 			}
 			tt = append(tt, t)
 		}
+		sort.Slice(tt, func(i, j int) bool { return tt[i] < tt[j] })
 		iptime := iptime{
 			ip:    ip,
 			atime: tt,

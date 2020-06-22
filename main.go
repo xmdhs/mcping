@@ -112,20 +112,15 @@ func write(b []byte, hosts []string) error {
 	}
 	w := bufio.NewScanner(bytes.NewReader(host))
 	bb := bytes.NewBuffer(nil)
-	ww := make([]string, 0)
 	for w.Scan() {
-		ww = append(ww, w.Text())
-	}
-	for _, v := range hosts {
-		for i, vv := range ww {
-			if strings.Contains(vv, v) {
-				ww[i] = ""
+		write := true
+		for _, v := range hosts {
+			if strings.Contains(strings.ToTitle(w.Text()), strings.ToTitle(v)) {
+				write = false
 			}
 		}
-	}
-	for _, v := range ww {
-		if v != "" {
-			bb.WriteString(v)
+		if write {
+			bb.WriteString(w.Text())
 			bb.WriteString("\n")
 		}
 	}

@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"mcping/mcping"
 	"net/http"
@@ -42,6 +41,7 @@ func main() {
 	read.Scan()
 	w := bytes.NewBuffer(nil)
 	w.WriteString("\n")
+	hosts := make([]string, 0, len(u))
 	for k, v := range m {
 		if v != "" {
 			s := strings.Split(k, "/")
@@ -49,9 +49,10 @@ func main() {
 			w.WriteString(" ")
 			w.WriteString(s[2])
 			w.WriteString("\n")
+			hosts = append(hosts, s[2])
 		}
 	}
-	err := write(w.Bytes())
+	err := write(w.Bytes(), hosts)
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("设置失败，请尝试右键以管理员身份运行")
@@ -95,9 +96,8 @@ func getjson() []byte {
 	return b
 }
 
-func write(b []byte) error {
-	f, err := os.Open(`C:\Windows\System32\drivers\etc\hosts`)
-	defer f.Close()
+func write(b []byte, hosts []string) error {
+	host, err := ioutil.ReadFile(`C:\Windows\System32\drivers\etc\hosts`)
 	if err != nil {
 		return err
 	}
@@ -106,16 +106,36 @@ func write(b []byte) error {
 	if err != nil {
 		return err
 	}
-	_, err = io.Copy(ff, f)
+	_, err = ff.Write(host)
 	if err != nil {
 		return err
 	}
-	fff, err := os.OpenFile(`C:\Windows\System32\drivers\etc\hosts`, os.O_APPEND|os.O_WRONLY, 777)
+	w := bufio.NewScanner(bytes.NewReader(host))
+	bb := bytes.NewBuffer(nil)
+	ww := make([]string, 0)
+	for w.Scan() {
+		ww = append(ww, w.Text())
+	}
+	for _, v := range hosts {
+		for i, vv := range ww {
+			if strings.Contains(vv, v) {
+				ww[i] = ""
+			}
+		}
+	}
+	for _, v := range ww {
+		if v != "" {
+			bb.WriteString(v)
+			bb.WriteString("\n")
+		}
+	}
+	bb.Write(b)
+	fff, err := os.Create(`C:\Windows\System32\drivers\etc\hosts`)
 	defer fff.Close()
 	if err != nil {
 		return err
 	}
-	_, err = fff.Write(b)
+	_, err = fff.Write(bb.Bytes())
 	if err != nil {
 		return err
 	}

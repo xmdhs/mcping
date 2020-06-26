@@ -35,12 +35,15 @@ func Ping(url, ip string) (int64, error) {
 	h, err := http.NewRequest("GET", url, nil)
 	h.Header.Set("Accept", "*/*")
 	h.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36")
+	h.Close = true
 	rep, err := c.Do(h)
+	if rep != nil {
+		defer rep.Body.Close()
+	}
 	if err != nil {
 		return 0, err
 	}
 	_, err = ioutil.ReadAll(rep.Body)
-	defer rep.Body.Close()
 	if err != nil {
 		return 0, err
 	}

@@ -5,12 +5,13 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"mcping/mcping"
 	"net/http"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/xmdhs/mcping/mcping"
 )
 
 func main() {

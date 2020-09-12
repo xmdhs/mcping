@@ -82,13 +82,15 @@ func getjson() []byte {
 	rep, err := http.NewRequest("GET", "https://ping.xmdhs.top/ip.json", nil)
 	reps, err := c.Do(rep)
 	var b []byte
+	if reps != nil {
+		defer reps.Body.Close()
+	}
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("大概是网络问题，使用内置 ip 列表")
 		return nil
 	}
 	b, err = ioutil.ReadAll(reps.Body)
-	defer reps.Body.Close()
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("大概是网络问题，使用内置 ip 列表")

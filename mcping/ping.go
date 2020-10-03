@@ -2,6 +2,7 @@ package mcping
 
 import (
 	"context"
+	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -43,7 +44,7 @@ func Ping(url, ip string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	_, err = ioutil.ReadAll(rep.Body)
+	_, err = io.Copy(ioutil.Discard, rep.Body)
 	if err != nil {
 		return 0, err
 	}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"strings"
@@ -45,12 +46,15 @@ func main() {
 	hosts := make([]string, 0, len(u))
 	for k, v := range m {
 		if v != "" {
-			s := strings.Split(k, "/")
+			u, err := url.Parse(k)
+			if err != nil {
+				panic(err)
+			}
 			w.WriteString(v)
 			w.WriteString(" ")
-			w.WriteString(s[2])
+			w.WriteString(u.Hostname())
 			w.WriteString("\n")
-			hosts = append(hosts, s[2])
+			hosts = append(hosts, u.Hostname())
 		}
 	}
 	err := write(w.Bytes(), hosts)

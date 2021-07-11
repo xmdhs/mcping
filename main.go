@@ -35,7 +35,8 @@ func main() {
 			if ip == "" {
 				fmt.Println(k, "无需更改")
 			} else {
-				fmt.Println(k, ": 测试所有 ip 中延迟最低的为", ip, "延迟为", atime)
+				d := time.Duration(atime)
+				fmt.Println(k, ": 测试所有 ip 中延迟最低的为", ip, "延迟为", d.String())
 			}
 			m[k] = ip
 		}

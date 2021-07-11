@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	_ "embed"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -63,6 +64,11 @@ func main() {
 		fmt.Println("设置失败，请尝试右键以管理员身份运行")
 		fmt.Println("文件保存在此程序同一目录下，可自行查阅有关资料自行设置")
 		fff, err := os.Create(`hosts`)
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("依然保存失败，你的电脑有问题。")
+			fmt.Println(w.String())
+		}
 		defer fff.Close()
 		_, err = fff.Write(w.Bytes())
 		if err != nil {
@@ -79,11 +85,19 @@ func main() {
 	}
 }
 
+//go:embed ip.json
+var j []byte
+
 func getjson() []byte {
 	c := http.Client{
 		Timeout: 5 * time.Second,
 	}
 	rep, err := http.NewRequest("GET", "https://ping.xmdhs.top/ip.json", nil)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("大概是网络问题，使用内置 ip 列表")
+		return j
+	}
 	reps, err := c.Do(rep)
 	var b []byte
 	if reps != nil {
@@ -92,13 +106,13 @@ func getjson() []byte {
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("大概是网络问题，使用内置 ip 列表")
-		return nil
+		return j
 	}
 	b, err = ioutil.ReadAll(reps.Body)
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("大概是网络问题，使用内置 ip 列表")
-		return nil
+		return j
 	}
 	return b
 }
@@ -109,10 +123,10 @@ func write(b []byte, hosts []string) error {
 		return err
 	}
 	ff, err := os.Create(`C:\Windows\System32\drivers\etc\hosts.mcping.bak`)
-	defer ff.Close()
 	if err != nil {
 		return err
 	}
+	defer ff.Close()
 	_, err = ff.Write(host)
 	if err != nil {
 		return err
@@ -133,10 +147,10 @@ func write(b []byte, hosts []string) error {
 	}
 	bb.Write(b)
 	fff, err := os.Create(`C:\Windows\System32\drivers\etc\hosts`)
-	defer fff.Close()
 	if err != nil {
 		return err
 	}
+	defer fff.Close()
 	_, err = fff.Write(bb.Bytes())
 	if err != nil {
 		return err

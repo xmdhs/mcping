@@ -34,6 +34,9 @@ func Ping(url, ip string) (int64, error) {
 	}
 	t := time.Now().UnixNano()
 	h, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return 0, err
+	}
 	h.Header.Set("Accept", "*/*")
 	h.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36")
 	h.Close = true

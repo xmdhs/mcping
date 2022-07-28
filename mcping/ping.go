@@ -2,15 +2,15 @@ package mcping
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
-	"strings"
 	"time"
 )
 
-func Ping(url, ip string) (int64, error) {
+func ping(url, ip string) (int64, error) {
 	var c http.Client
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	if ip != "" {
@@ -20,9 +20,11 @@ func Ping(url, ip string) (int64, error) {
 			DualStack: true,
 		}
 		transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
-			s := strings.Split(addr, ":")
-			addr = strings.ReplaceAll(addr, s[0], ip)
-			return dialer.DialContext(ctx, network, addr)
+			_, port, err := net.SplitHostPort(addr)
+			if err != nil {
+				panic(err)
+			}
+			return dialer.DialContext(ctx, network, net.JoinHostPort(ip, port))
 		}
 	}
 	c = http.Client{
@@ -45,11 +47,11 @@ func Ping(url, ip string) (int64, error) {
 		defer rep.Body.Close()
 	}
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("ping: %w", err)
 	}
 	_, err = io.Copy(ioutil.Discard, rep.Body)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("ping: %w", err)
 	}
 	return time.Now().UnixNano() - t, nil
 }

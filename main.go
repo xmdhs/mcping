@@ -31,6 +31,7 @@ func main() {
 		if err != nil {
 			fmt.Print(k, ":")
 			fmt.Println("所有 ip 均不可用")
+			fmt.Println(err)
 		} else {
 			if ip == "" {
 				fmt.Println(k, "无需更改")
@@ -45,18 +46,19 @@ func main() {
 	read.Scan()
 	w := bytes.NewBuffer(nil)
 	w.WriteString("\n")
-	hosts := make([]string, 0, len(u))
+	hosts := []string{}
 	for k, v := range m {
 		if v != "" {
 			u, err := url.Parse(k)
 			if err != nil {
 				panic(err)
 			}
+			hostName := u.Hostname()
 			w.WriteString(v)
 			w.WriteString(" ")
-			w.WriteString(u.Hostname())
+			w.WriteString(hostName)
 			w.WriteString("\n")
-			hosts = append(hosts, u.Hostname())
+			hosts = append(hosts, hostName)
 		}
 	}
 	err := write(w.Bytes(), hosts)
@@ -119,42 +121,42 @@ func getjson() []byte {
 }
 
 func write(b []byte, hosts []string) error {
-	host, err := ioutil.ReadFile(`C:\Windows\System32\drivers\etc\hosts`)
+	host, err := os.ReadFile(`C:\Windows\System32\drivers\etc\hosts`)
 	if err != nil {
-		return err
+		return fmt.Errorf("write: %w", err)
 	}
 	ff, err := os.Create(`C:\Windows\System32\drivers\etc\hosts.mcping.bak`)
 	if err != nil {
-		return err
+		return fmt.Errorf("write: %w", err)
 	}
 	defer ff.Close()
 	_, err = ff.Write(host)
 	if err != nil {
-		return err
+		return fmt.Errorf("write: %w", err)
 	}
 	w := bufio.NewScanner(bytes.NewReader(host))
 	bb := bytes.NewBuffer(nil)
+
+B:
 	for w.Scan() {
-		write := true
+		t := w.Text()
 		for _, v := range hosts {
-			if strings.Contains(strings.ToTitle(w.Text()), strings.ToTitle(v)) {
-				write = false
+			if strings.EqualFold(t, v) {
+				continue B
 			}
 		}
-		if write {
-			bb.WriteString(w.Text())
-			bb.WriteString("\n")
-		}
+		bb.WriteString(t)
+		bb.WriteString("\n")
 	}
 	bb.Write(b)
 	fff, err := os.Create(`C:\Windows\System32\drivers\etc\hosts`)
 	if err != nil {
-		return err
+		return fmt.Errorf("write: %w", err)
 	}
 	defer fff.Close()
 	_, err = fff.Write(bb.Bytes())
 	if err != nil {
-		return err
+		return fmt.Errorf("write: %w", err)
 	}
 	return nil
 }

@@ -11,7 +11,7 @@ func TestPing(t *testing.T) {
 		"https://www.minecraft.net": "99.84.227.53",
 	}
 	for k, v := range list {
-		i, err := Ping(k, v)
+		i, err := ping(k, v)
 		if err != nil {
 			t.Error(err)
 		}

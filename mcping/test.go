@@ -2,6 +2,8 @@ package mcping
 
 import (
 	"errors"
+	"fmt"
+	"math"
 	"sort"
 	"sync"
 )
@@ -26,7 +28,7 @@ func Test(url string, ip []string) (string, int64, error) {
 	t.tim()
 	aip, err := tosort(t.m)
 	if err != nil {
-		return "", 0, err
+		return "", 0, fmt.Errorf("Test: %w", err)
 	}
 	return aip.k, aip.v, nil
 }
@@ -48,9 +50,9 @@ func (ti *testip) goget(ip string) {
 	go func() {
 		tt := make([]int64, 0, 3)
 		for i := 0; i < 3; i++ {
-			t, err := Ping(ti.url, ip)
+			t, err := ping(ti.url, ip)
 			if err != nil {
-				t = 999999999999999
+				t = math.MaxInt64
 			}
 			tt = append(tt, t)
 		}
@@ -88,8 +90,8 @@ func tosort(m map[string]int64) (tosorts, error) {
 		})
 	}
 	sort.Slice(t, func(i, j int) bool { return t[i].v < t[j].v })
-	if t[0].v == 999999999999999 {
-		return t[0], errors.New("can not get ip")
+	if t[0].v == math.MaxInt64 {
+		return t[0], fmt.Errorf("tosort: %w", ErrNotHaveIp)
 	}
 	return t[0], nil
 }
@@ -98,3 +100,5 @@ type tosorts struct {
 	k string
 	v int64
 }
+
+var ErrNotHaveIp = errors.New("没有可用 ip")

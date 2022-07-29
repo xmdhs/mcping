@@ -5,6 +5,7 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -121,27 +122,32 @@ func getjson() []byte {
 }
 
 func write(b []byte, hosts []string) error {
-	host, err := os.ReadFile(`C:\Windows\System32\drivers\etc\hosts`)
+	hostf, err := os.Open(`C:\Windows\System32\drivers\etc\hosts`)
 	if err != nil {
 		return fmt.Errorf("write: %w", err)
 	}
+	defer hostf.Close()
 	ff, err := os.Create(`C:\Windows\System32\drivers\etc\hosts.mcping.bak`)
 	if err != nil {
 		return fmt.Errorf("write: %w", err)
 	}
 	defer ff.Close()
-	_, err = ff.Write(host)
+	_, err = io.Copy(ff, hostf)
 	if err != nil {
 		return fmt.Errorf("write: %w", err)
 	}
-	w := bufio.NewScanner(bytes.NewReader(host))
+	_, err = hostf.Seek(0, 0)
+	if err != nil {
+		return fmt.Errorf("write: %w", err)
+	}
+	w := bufio.NewScanner(hostf)
 	bb := bytes.NewBuffer(nil)
 
 B:
 	for w.Scan() {
 		t := w.Text()
 		for _, v := range hosts {
-			if strings.EqualFold(t, v) {
+			if strings.Contains(strings.ToTitle(t), strings.ToTitle(v)) {
 				continue B
 			}
 		}
